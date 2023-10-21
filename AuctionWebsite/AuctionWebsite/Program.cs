@@ -12,7 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 // Injection
-builder.Services.AddScoped<IAuctionService, AuctionService>():
+builder.Services.AddScoped<IAuctionService, AuctionService>();
+builder.Services.AddScoped<IAuctionPersistence, AuctionSqlPersistance>();
 
 // db, with dependency injection
 builder.Services.AddDbContext<AuctionDbContext>(options =>

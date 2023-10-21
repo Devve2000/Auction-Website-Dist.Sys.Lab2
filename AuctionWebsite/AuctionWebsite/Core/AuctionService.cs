@@ -5,9 +5,16 @@ namespace AuctionWebsite.Core
 {
     public class AuctionService : IAuctionService
     {
+        private IAuctionPersistence _auctionPersistance;
+
+        public AuctionService(IAuctionPersistence auctionPersistence) 
+        {
+            _auctionPersistance = auctionPersistence;
+        }
+
         public List<Auction> GetAll()
         {
-            throw new NotImplementedException();
+            return _auctionPersistance.GetAll();
         }
     }
 }

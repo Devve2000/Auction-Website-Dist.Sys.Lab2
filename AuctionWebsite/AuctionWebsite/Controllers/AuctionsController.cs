@@ -1,4 +1,6 @@
-﻿using Dist.Sys.Lab2.Core.Interfaces;
+﻿using AuctionWebsite.ViewModels;
+using Dist.Sys.Lab2.Core.Interfaces;
+using Dist.Sys.Lab2.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +18,14 @@ namespace AuctionWebsite.Controllers
         // GET: AuctionsController
         public ActionResult Index()
         {
-            return View();
+            List<Auction> auctions = _auctionService.GetAll();
+            List<AuctionVM> auctionVMs = new List<AuctionVM>();
+            foreach (var auction in auctions)
+            {
+                auctionVMs.Add(AuctionVM.FromAuction(auction));
+            }
+
+            return View(auctionVMs);
         }
 
         /*
