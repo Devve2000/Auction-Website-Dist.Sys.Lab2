@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace AuctionWebsite.Persistance
 {
@@ -8,5 +9,6 @@ namespace AuctionWebsite.Persistance
 
         public DbSet<AuctionDb> AuctionDbs { get; set; }
         public DbSet<BidDb> BidDbs { get; set; }
+
     }
 }

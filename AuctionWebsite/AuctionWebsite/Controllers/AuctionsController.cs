@@ -3,9 +3,14 @@ using Dist.Sys.Lab2.Core.Interfaces;
 using Dist.Sys.Lab2.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.VisualBasic;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace AuctionWebsite.Controllers
 {
+
+    [Authorize]
     public class AuctionsController : Controller
     {
         private readonly IAuctionService _auctionService;
@@ -28,13 +33,50 @@ namespace AuctionWebsite.Controllers
             return View(auctionVMs);
         }
 
-        /*
-        // GET: AuctionsController/Details/5
-        public ActionResult Details(int id)
+        // GET: AuctionsController
+        public ActionResult BidAuctions()
+        {
+            List<Auction> auctions = _auctionService.GetAll();
+            List<AuctionVM> auctionVMs = new List<AuctionVM>();
+            foreach (var auction in auctions)
+            {
+                auctionVMs.Add(AuctionVM.FromAuction(auction));
+            }
+
+            return View(auctionVMs);
+        }
+
+        // GET: AuctionsController
+        public ActionResult WonAuctions()
+        {
+            List<Auction> auctions = _auctionService.GetAll();
+            List<AuctionVM> auctionVMs = new List<AuctionVM>();
+            foreach (var auction in auctions)
+            {
+                auctionVMs.Add(AuctionVM.FromAuction(auction));
+            }
+
+            return View(auctionVMs);
+        }
+
+        // GET: AuctionsController
+        public ActionResult CreateAuction()
         {
             return View();
         }
 
+        
+        // GET: AuctionsController/Details/5
+        public ActionResult Details(int id)
+        {
+            if (id == null) throw new ArgumentNullException();
+            Auction a = _auctionService.GetAuctionById(id);
+            AuctionDetailsVM advm = AuctionDetailsVM.FromAuction(a);
+            return View(advm);
+        }
+
+
+        
         // GET: AuctionsController/Create
         public ActionResult Create()
         {
@@ -44,18 +86,25 @@ namespace AuctionWebsite.Controllers
         // POST: AuctionsController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(AuctionCreateVM acvm)
         {
-            try
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                Auction a = new Auction()
+                {
+                    Name = acvm.Name,
+                    Description = acvm.Description,
+                    StartingPrice = acvm.StartingPrice,
+                    ExpirationDate = acvm.ExpirationDate,
+                    UserName = User.Identity.Name
+                };
+                _auctionService.Add(a);
+                return RedirectToAction("Index");
             }
-            catch
-            {
-                return View();
-            }
+            return View();
         }
 
+        /*
         // GET: AuctionsController/Edit/5
         public ActionResult Edit(int id)
         {

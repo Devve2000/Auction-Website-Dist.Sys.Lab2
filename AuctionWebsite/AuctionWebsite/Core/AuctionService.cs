@@ -16,5 +16,15 @@ namespace AuctionWebsite.Core
         {
             return _auctionPersistance.GetAll();
         }
+
+        public Auction GetAuctionById(int id)
+        {
+            return _auctionPersistance.GetAuctionById(id);
+        }
+
+        public void Add(Auction auction)
+        {
+            _auctionPersistance.Add(auction);
+        }
     }
 }

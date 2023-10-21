@@ -11,14 +11,27 @@
         private List<Bid> _bids = new List<Bid>();
         public IEnumerable<Bid> Bids => _bids;
 
+        public string UserName { get; set; }
         
-        public Auction(int id, string name, string description, int startingPrice, DateTime expirationDate)
+        public void addBid(Bid b)
+        {
+            if (b == null) throw new ArgumentException();
+
+            _bids.Add(b);
+        }
+
+        public Auction(int id, string name, string description, int startingPrice, DateTime expirationDate, string userName)
         {
             Id = id;
             Name = name;
             Description = description;
             StartingPrice = startingPrice;
             ExpirationDate = expirationDate;
+            UserName = userName;
+        }
+
+        public Auction()
+        {
         }
     }
 }

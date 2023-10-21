@@ -14,14 +14,15 @@ namespace AuctionWebsite.Persistance
         [Required]
         public DateTime Date { get; set; }
 
+        //Foreign key to the Auction
         [Required]
         [ForeignKey("AuctionId")]
         public AuctionDb AuctionDb { get; set; }
+        public int AuctionId { get; set; }
 
-        /* Vem som har lagt budet:
         [Required]
-        [ForeignKey("UserId")]
-        public UserDb UserDb { get; set; }
-        */
+        
+        //Owner of bid
+        public string UserName { get; set; }
     }
 }

@@ -10,11 +10,14 @@ namespace Dist.Sys.Lab2.Core
         public int Amount { get; set; }
         public DateTime Date { get; set; }
 
-        public Bid(int id, int amount, DateTime date) 
+        public string UserName { get; set; }
+
+        public Bid(int id, int amount, DateTime date, string userName) 
         {
             Id = id;
             Amount = amount;
             Date = date;
+            UserName = userName;
         }
     }
 }

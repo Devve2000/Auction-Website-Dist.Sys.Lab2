@@ -3,5 +3,10 @@
     public interface IAuctionService
     {
         List<Auction> GetAll();
+        
+        void Add(Auction auction);
+
+
+        Auction GetAuctionById(int id);
     }
 }

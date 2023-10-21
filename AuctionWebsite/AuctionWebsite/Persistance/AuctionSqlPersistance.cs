@@ -17,8 +17,9 @@ namespace AuctionWebsite.Persistance
         {
             //Fixa använda användarhantering!
             var AuctionDbs = _dbContext.AuctionDbs
-                //.Where(a => true)
+                .Where(a => a.ExpirationDate > DateTime.Now)
                 //.Include(p => p.BidDbs)
+                .OrderByDescending(a => a.ExpirationDate)
                 .ToList();
 
             List<Auction> result = new List<Auction>();
@@ -29,12 +30,50 @@ namespace AuctionWebsite.Persistance
                     adb.Name,
                     adb.Description,
                     adb.StartingPrice,
-                    adb.ExpirationDate);
+                    adb.ExpirationDate,
+                    adb.UserName);
 
                 result.Add( auction );
             }
 
             return result;
+        }
+
+        public Auction GetAuctionById(int id)
+        {
+            //Fixa använda användarhantering!
+            var auctionDb = _dbContext.AuctionDbs
+                .Where(p => p.Id == id)
+                .Include(p => p.BidDbs)
+                .SingleOrDefault();
+
+            Auction auction = new Auction(
+                auctionDb.Id,
+                auctionDb.Name,
+                auctionDb.Description,
+                auctionDb.StartingPrice,
+                auctionDb.ExpirationDate,
+                auctionDb.UserName);
+
+            foreach(BidDb bdb in auctionDb.BidDbs)
+            {
+                auction.addBid(new Bid(bdb.Id, bdb.Amount, bdb.Date, bdb.UserName));
+            }
+            return auction;
+        }
+
+        public void Add(Auction a)
+        {
+            AuctionDb adb = new AuctionDb()
+            {
+                Name = a.Name,
+                Description = a.Description,
+                StartingPrice = a.StartingPrice,
+                ExpirationDate = a.ExpirationDate,
+                UserName = a.UserName
+            };
+            _dbContext.AuctionDbs.Add(adb);
+            _dbContext.SaveChanges();
         }
     }
 }

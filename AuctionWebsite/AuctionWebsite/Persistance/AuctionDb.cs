@@ -18,6 +18,10 @@ namespace AuctionWebsite.Persistance
         [Required]
         public int StartingPrice { get; set; }
 
+        // Connection to the UserDB
+        [Required]
+        public string UserName { get; set; }
+
         [Required]
         [DataType(DataType.DateTime)]
         public DateTime ExpirationDate { get; set; }
