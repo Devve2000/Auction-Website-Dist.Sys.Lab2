@@ -76,7 +76,7 @@ namespace AuctionWebsite.Persistance
             _dbContext.SaveChanges();
         }
 
-        //Krav 2
+        //Krav 3
         //Uppdatera auction. Antingen (Auction a) eller (int id, string description) ?
         public void Update(int id, string newDescription)
         {
@@ -94,7 +94,7 @@ namespace AuctionWebsite.Persistance
         }
 
         // Krav 7
-        public List<Auction> GetBiddedAuctions(string userName) 
+        public List<Auction> GetBiddedAuctions(string userName)
         {
             // Any returnerar true ifall en auction har en bid gjord av userName
             var auctionDbs = _dbContext.AuctionDbs
