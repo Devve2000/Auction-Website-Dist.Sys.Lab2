@@ -19,5 +19,25 @@ namespace Dist.Sys.Lab2.Core
             Date = date;
             UserName = userName;
         }
+
+        public Bid() { }
+
+        /*
+        public Bid getNewBid(int bidAmount, string userName, int highestBid, int startingPrice)
+        {
+            if(bidAmount > highestBid && bidAmount >= startingPrice) 
+            {
+                return new Bid()
+                {
+                    Amount = bidAmount,
+                    Date = DateTime.Now,
+                    UserName = userName
+                };
+            }
+
+            return null;
+        }
+
+        */
     }
 }

@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.VisualBasic;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Diagnostics;
+using Microsoft.IdentityModel.Tokens;
 
 namespace AuctionWebsite.Controllers
 {
@@ -37,7 +39,7 @@ namespace AuctionWebsite.Controllers
         // GET: AuctionsController
         public ActionResult BidAuctions()
         {
-            List<Auction> auctions = _auctionService.GetAll();
+            List<Auction> auctions = _auctionService.GetBiddedAuctions(User.Identity.Name);
             List<AuctionVM> auctionVMs = new List<AuctionVM>();
             foreach (var auction in auctions)
             {
@@ -50,7 +52,7 @@ namespace AuctionWebsite.Controllers
         // GET: AuctionsController
         public ActionResult WonAuctions()
         {
-            List<Auction> auctions = _auctionService.GetAll();
+            List<Auction> auctions = _auctionService.GetWonAuctions(User.Identity.Name);
             List<AuctionVM> auctionVMs = new List<AuctionVM>();
             foreach (var auction in auctions)
             {
@@ -70,8 +72,8 @@ namespace AuctionWebsite.Controllers
         // GET: AuctionsController/Details/5
         public ActionResult Details(int id)
         {
-            if (id == null) throw new ArgumentNullException(); //************Ändra till "not found"
             Auction a = _auctionService.GetAuctionById(id);
+            if (a == null) return NotFound();
             AuctionDetailsVM advm = AuctionDetailsVM.FromAuction(a);
             return View(advm);
         }
@@ -134,12 +136,13 @@ namespace AuctionWebsite.Controllers
         // GET: AuctionsController/Create
         public ActionResult CreateBid(int id)
         {
-            Auction a = _auctionService.GetAuctionById(id);
+            Auction a = _auctionService.GetOnlyAuctionInfoById(id);
             if (a == null) return NotFound();
 
-            if (a.UserName.Equals(User.Identity.Name)) return RedirectToAction("Details",id);
-            
-            
+            if (a.UserName.Equals(User.Identity.Name))
+            {
+                return RedirectToAction("Details", new { id = a.Id });
+            }
             return View();
         }
 
@@ -151,21 +154,39 @@ namespace AuctionWebsite.Controllers
             if (ModelState.IsValid)
             {
                 Auction a = _auctionService.GetAuctionById(id);
-                if(bcvm.Bid > a.highestBid())
-                {
 
+                int highestBid = a.highestBid();
+
+                if(bcvm.Bid > highestBid && bcvm.Bid >= a.StartingPrice)
+                {
+                    Bid newBid = new Bid()
+                    {
+                        Amount = bcvm.Bid,
+                        Date = DateTime.Now,
+                        UserName = User.Identity.Name
+                    };
+                    int auctionId = id;
+                    _auctionService.AddBidToAuction(id, newBid);
+                    return RedirectToAction("Details", new { id = auctionId});
                 }
                 else
                 {
                     // Can't enter a bid less.
-                    ModelState.AddModelError("BidError", "To low of a bid, go above the last one: " + a.highestBid());
+                    if(bcvm.Bid < highestBid) ModelState.AddModelError("BidError", "To low of a bid, needs to be atleast above the last bid of :" + highestBid + " kr");
+                    else ModelState.AddModelError("BidError", "To low of a bid, needs to be atleast the starting price of " +  a.StartingPrice + " kr");
                     return View();
                 }
-                // TODO : Skapa bid
-                // TODO : Kalla service CreateBid
-                // TODO : Returnera till index sidan.
             }
             return View();
+        }
+
+
+        // GET: AuctionsController/Details/5
+        public ActionResult DetailsOfWonAuction(int id)
+        {
+            Auction a = _auctionService.GetAuctionById(id);
+            AuctionDetailsVM advm = AuctionDetailsVM.FromAuction(a);
+            return View(advm);
         }
 
         /*

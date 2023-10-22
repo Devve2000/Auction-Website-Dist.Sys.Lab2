@@ -4,7 +4,7 @@
     ViewData["Title"] = "BidAuctions";
 }
 
-<h1>BidAuctions</h1>
+<h1> Auctions bid on </h1>
 
 <table class="table">
     <thead>
@@ -16,7 +16,7 @@
                 @Html.DisplayNameFor(model => model.Description)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.StartingPrice)
+                @Html.DisplayNameFor(model => model.StartingPrice) (kr)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.ExpirationDate)
@@ -40,8 +40,7 @@
                 @Html.DisplayFor(modelItem => item.ExpirationDate)
             </td>
             <td>
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ })
+                @Html.ActionLink("Details", "Details", new { id = item.Id })
 
             </td>
         </tr>

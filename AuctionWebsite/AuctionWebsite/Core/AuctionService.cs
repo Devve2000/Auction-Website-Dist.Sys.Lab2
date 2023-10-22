@@ -31,5 +31,33 @@ namespace AuctionWebsite.Core
         {
             _auctionPersistance.Update(auction);
         }
+
+        public Auction GetOnlyAuctionInfoById(int id)
+        {
+            return _auctionPersistance.GetOnlyAuctionInfoById(id);
+        }
+
+        public List<Bid> GetBidsOfAuctionById(int id)
+        {
+            return _auctionPersistance.GetBidsOfAuctionById(id);
+        }
+
+        public void AddBidToAuction(int auctionId, Bid bid)
+        {
+            _auctionPersistance.AddBidToAuction(auctionId, bid);
+        }
+
+        public List<Auction> GetBiddedAuctions(string userName)
+        {
+            return _auctionPersistance.GetBiddedAuctions(userName);
+        }
+        public List<Auction> GetWonAuctions(string userName)
+        {
+            return _auctionPersistance.GetWonAuctions(userName);
+        }
+
+
+
+
     }
 }

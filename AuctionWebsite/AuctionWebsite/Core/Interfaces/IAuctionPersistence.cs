@@ -13,5 +13,12 @@
         List<Auction> GetBiddedAuctions(string userName);
 
         List<Auction> GetWonAuctions(string userName);
+
+        Auction GetOnlyAuctionInfoById(int id);
+
+        List<Bid> GetBidsOfAuctionById(int id);
+
+        void AddBidToAuction(int auctionId, Bid bid);
+
     }
 }

@@ -1,13 +1,13 @@
 ﻿@model AuctionWebsite.ViewModels.AuctionDetailsVM
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "DetailsOfWonAuction";
 }
 
-<h1>Details</h1>
+<h1>Details of a won Auction</h1>
 
 <div>
-    <h4>Auction</h4>
+    <h4>Auction details</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -23,10 +23,10 @@
             @Html.DisplayFor(model => model.Description)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StartingPrice) (kr)
+            @Html.DisplayNameFor(model => model.StartingPrice)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StartingPrice)
+            @Html.DisplayFor(model => model.StartingPrice) (kr)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.ExpirationDate)
@@ -34,35 +34,28 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.ExpirationDate)
         </dd>
-        <dt class="col-sm-2">
+        <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.CreatedBy)
         </dt>
-        <dd class="col-sm-10">
+        <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.CreatedBy)
         </dd>
-
-        <dd class="col-sm-10">
-            @Html.ActionLink("Edit description", "Edit",  new { id = Model.Id}) |  @Html.ActionLink("Bid", "CreateBid",  new { id = Model.Id})
-        </dd>
-
-
     </dl>
 </div>
-
 <div>
-
-<br />
+    <a asp-action="WonAuctions">Back to List</a>
 </div>
-    <h4> Bids</h4>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Date</th>
-                <th>Amount (kr)</th>
-            </tr>
-        </thead>
-        <tbody>
+<br />
+<h4> Bids</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Date</th>
+            <th>Amount (kr)</th>
+        </tr>
+    </thead>
+    <tbody>
         @foreach (var i in Model.BidsVM)
         {
             <tr>
@@ -71,6 +64,5 @@
                 <td> @Html.DisplayFor(modelItem => i.Amount) </td>
             </tr>
         }
-        </tbody>
-    </table>
-
+    </tbody>
+</table>
