@@ -26,5 +26,10 @@ namespace AuctionWebsite.Core
         {
             _auctionPersistance.Add(auction);
         }
+
+        public void Update(Auction auction)
+        {
+            _auctionPersistance.Update(auction);
+        }
     }
 }

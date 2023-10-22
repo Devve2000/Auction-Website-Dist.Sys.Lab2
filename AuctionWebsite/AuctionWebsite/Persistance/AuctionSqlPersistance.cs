@@ -2,6 +2,7 @@
 using Dist.Sys.Lab2.Core;
 using Dist.Sys.Lab2.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace AuctionWebsite.Persistance
 {
@@ -28,6 +29,8 @@ namespace AuctionWebsite.Persistance
             List<Auction> result = new List<Auction>();
             foreach(AuctionDb adb  in AuctionDbs)
             {
+                Auction auction = _mapper.Map<Auction>(adb);
+                /*
                 Auction auction = new Auction(
                     adb.Id,
                     adb.Name,
@@ -35,7 +38,7 @@ namespace AuctionWebsite.Persistance
                     adb.StartingPrice,
                     adb.ExpirationDate,
                     adb.UserName);
-
+                */
                 result.Add( auction );
             }
 
@@ -44,10 +47,9 @@ namespace AuctionWebsite.Persistance
 
         public Auction GetAuctionById(int id)
         {
-            //Fixa använda användarhantering!
             var auctionDb = _dbContext.AuctionDbs
                 .Where(a => a.Id == id)
-                .Include(a => a.BidDbs)
+                .Include(a => a.BidDbs.OrderByDescending(b => b.Amount))
                 .SingleOrDefault();
 
             Auction auction = _mapper.Map<Auction>(auctionDb);
@@ -61,17 +63,18 @@ namespace AuctionWebsite.Persistance
                 auctionDb.ExpirationDate,
                 auctionDb.UserName);
             */
-
             foreach(BidDb bdb in auctionDb.BidDbs)
             {
                 //auction.addBid(new Bid(bdb.Id, bdb.Amount, bdb.Date, bdb.UserName));
                 auction.addBid(_mapper.Map<Bid>(bdb));
             }
+            
             return auction;
         }
 
         public void Add(Auction a)
         {
+            /*
             AuctionDb adb = new AuctionDb()
             {
                 Name = a.Name,
@@ -80,21 +83,23 @@ namespace AuctionWebsite.Persistance
                 ExpirationDate = a.ExpirationDate,
                 UserName = a.UserName
             };
+            */
+            AuctionDb adb = _mapper.Map<AuctionDb>(a);
             _dbContext.AuctionDbs.Add(adb);
             _dbContext.SaveChanges();
         }
 
         //Krav 3
         //Uppdatera auction. Antingen (Auction a) eller (int id, string description) ?
-        public void Update(int id, string newDescription)
+        public void Update(Auction auction)
         {
             var auctionDb = _dbContext.AuctionDbs
-                .Where(a => a.Id == id)
+                .Where(a => a.Id == auction.Id)
                 .SingleOrDefault();
 
             if(auctionDb != null)
             {
-                auctionDb.Description = newDescription;
+                auctionDb.Description = auction.Description;
 
                 _dbContext.SaveChanges();
             }
@@ -152,6 +157,19 @@ namespace AuctionWebsite.Persistance
             }
 
             return result;
+        }
+
+        public Auction GetAuctionBetsAndOwner(int id)
+        {
+            var auctionDb = _dbContext.AuctionDbs
+                .Where(a => a.Id == id)
+                .Include(a => a.BidDbs.OrderByDescending(b => b.Amount))
+                .Select(a => new { UserName = a.UserName })
+                .SingleOrDefault();
+
+            return new Auction();
+
+
         }
     }
 }

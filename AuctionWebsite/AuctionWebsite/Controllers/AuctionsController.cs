@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.VisualBasic;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace AuctionWebsite.Controllers
 {
@@ -108,23 +109,63 @@ namespace AuctionWebsite.Controllers
         // GET: AuctionsController/Edit/5
         public ActionResult Edit(int id)
         {
-            // TODO: Check if the user owns the resourse
-            return View();
+            return checkAuthorizationOfResource(id);
         }
 
         // POST: AuctionsController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, AuctionUpdateVM auvm)
         {
-            try
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                Auction a = new Auction()
+                {
+                    Id = id,
+                    Description = auvm.Description
+                };
+                _auctionService.Update(a);
+                return RedirectToAction("Index");
             }
-            catch
+            return View();
+        }
+
+
+        // GET: AuctionsController/Create
+        public ActionResult CreateBid(int id)
+        {
+            Auction a = _auctionService.GetAuctionById(id);
+            if (a == null) return NotFound();
+
+            if (a.UserName.Equals(User.Identity.Name)) return RedirectToAction("Details",id);
+            
+            
+            return View();
+        }
+
+        // POST: AuctionsController/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateBid(int id, BidCreateVM bcvm)
+        {
+            if (ModelState.IsValid)
             {
-                return View();
+                Auction a = _auctionService.GetAuctionById(id);
+                if(bcvm.Bid > a.highestBid())
+                {
+
+                }
+                else
+                {
+                    // Can't enter a bid less.
+                    ModelState.AddModelError("BidError", "To low of a bid, go above the last one: " + a.highestBid());
+                    return View();
+                }
+                // TODO : Skapa bid
+                // TODO : Kalla service CreateBid
+                // TODO : Returnera till index sidan.
             }
+            return View();
         }
 
         /*
@@ -149,5 +190,16 @@ namespace AuctionWebsite.Controllers
             }
         }
         */
+
+        private ActionResult checkAuthorizationOfResource(int id)
+        {
+            Auction a = _auctionService.GetAuctionById(id);
+            if (a == null) return NotFound();
+            if (a.UserName.Equals(User.Identity.Name))
+            {
+                return View();
+            }
+            return BadRequest();
+        }
     }
 }

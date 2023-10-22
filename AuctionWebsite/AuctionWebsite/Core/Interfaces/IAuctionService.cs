@@ -8,5 +8,7 @@
 
 
         Auction GetAuctionById(int id);
+
+        void Update(Auction auction);
     }
 }

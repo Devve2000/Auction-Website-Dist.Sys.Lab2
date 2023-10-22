@@ -1,4 +1,6 @@
-﻿namespace Dist.Sys.Lab2.Core
+﻿using Microsoft.IdentityModel.Tokens;
+
+namespace Dist.Sys.Lab2.Core
 {
     public class Auction
     {
@@ -32,6 +34,12 @@
 
         public Auction()
         {
+        }
+
+        public int highestBid()
+        {
+            if (_bids.IsNullOrEmpty()) return 0;
+            return _bids.MaxBy(b => b.Amount).Amount;
         }
     }
 }

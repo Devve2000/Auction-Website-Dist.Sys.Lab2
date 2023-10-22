@@ -8,7 +8,7 @@
 
         void Add(Auction auction);
 
-        void Update(int id, string newDescription);
+        void Update(Auction auction);
 
         List<Auction> GetBiddedAuctions(string userName);
 
