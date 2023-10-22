@@ -26,6 +26,6 @@ namespace AuctionWebsite.Persistance
         [DataType(DataType.DateTime)]
         public DateTime ExpirationDate { get; set; }
 
-        public IEnumerable<BidDb> BidDbs { get; set; } = new List<BidDb>();
+        public List<BidDb> BidDbs { get; set; } = new List<BidDb>();
     }
 }

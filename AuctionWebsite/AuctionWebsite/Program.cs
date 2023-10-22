@@ -5,11 +5,15 @@ using AuctionWebsite.Data;
 using AuctionWebsite.Areas.Identity.Data;
 using Dist.Sys.Lab2.Core.Interfaces;
 using AuctionWebsite.Core;
+using Microsoft.AspNetCore.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+//AutoMapper
+builder.Services.AddAutoMapper(typeof(Program));
 
 // Injection
 builder.Services.AddScoped<IAuctionService, AuctionService>();

@@ -69,7 +69,7 @@ namespace AuctionWebsite.Controllers
         // GET: AuctionsController/Details/5
         public ActionResult Details(int id)
         {
-            if (id == null) throw new ArgumentNullException();
+            if (id == null) throw new ArgumentNullException(); //************Ändra till "not found"
             Auction a = _auctionService.GetAuctionById(id);
             AuctionDetailsVM advm = AuctionDetailsVM.FromAuction(a);
             return View(advm);
@@ -104,10 +104,11 @@ namespace AuctionWebsite.Controllers
             return View();
         }
 
-        /*
+        
         // GET: AuctionsController/Edit/5
         public ActionResult Edit(int id)
         {
+            // TODO: Check if the user owns the resourse
             return View();
         }
 
@@ -126,6 +127,7 @@ namespace AuctionWebsite.Controllers
             }
         }
 
+        /*
         // GET: AuctionsController/Delete/5
         public ActionResult Delete(int id)
         {

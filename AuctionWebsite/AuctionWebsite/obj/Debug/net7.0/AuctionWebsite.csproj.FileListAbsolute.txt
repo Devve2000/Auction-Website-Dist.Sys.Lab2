@@ -578,3 +578,5 @@ C:\HI1031_Labb\Github\Dist.Sys.Lab2\AuctionWebsite\AuctionWebsite\bin\Debug\net7
 C:\HI1031_Labb\Github\Dist.Sys.Lab2\AuctionWebsite\AuctionWebsite\bin\Debug\net7.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.resources.dll
 C:\HI1031_Labb\Github\Dist.Sys.Lab2\AuctionWebsite\AuctionWebsite\bin\Debug\net7.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
 C:\HI1031_Labb\Github\Dist.Sys.Lab2\AuctionWebsite\AuctionWebsite\obj\Debug\net7.0\AuctionWebsite.MvcApplicationPartsAssemblyInfo.cs
+C:\Distribuerade system\Laboration2\Github\Dist.Sys.Lab2\AuctionWebsite\AuctionWebsite\bin\Debug\net7.0\AutoMapper.dll
+C:\Distribuerade system\Laboration2\Github\Dist.Sys.Lab2\AuctionWebsite\AuctionWebsite\bin\Debug\net7.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
