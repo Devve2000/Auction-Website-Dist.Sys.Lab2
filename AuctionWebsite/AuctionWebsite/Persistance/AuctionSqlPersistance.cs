@@ -46,8 +46,8 @@ namespace AuctionWebsite.Persistance
         {
             //Fixa använda användarhantering!
             var auctionDb = _dbContext.AuctionDbs
-                .Where(p => p.Id == id)
-                .Include(p => p.BidDbs)
+                .Where(a => a.Id == id)
+                .Include(a => a.BidDbs)
                 .SingleOrDefault();
 
             Auction auction = _mapper.Map<Auction>(auctionDb);
@@ -82,6 +82,76 @@ namespace AuctionWebsite.Persistance
             };
             _dbContext.AuctionDbs.Add(adb);
             _dbContext.SaveChanges();
+        }
+
+        //Krav 3
+        //Uppdatera auction. Antingen (Auction a) eller (int id, string description) ?
+        public void Update(int id, string newDescription)
+        {
+            var auctionDb = _dbContext.AuctionDbs
+                .Where(a => a.Id == id)
+                .SingleOrDefault();
+
+            if(auctionDb != null)
+            {
+                auctionDb.Description = newDescription;
+
+                _dbContext.SaveChanges();
+            }
+
+        }
+
+        // Krav 7
+        public List<Auction> GetBiddedAuctions(string userName)
+        {
+            // Any returnerar true ifall en auction har en bid gjord av userName
+            var auctionDbs = _dbContext.AuctionDbs
+                .Include(a => a.BidDbs)
+                .Where(a => a.BidDbs.Any(b => b.UserName == userName) && a.ExpirationDate > DateTime.Now)
+                .ToList();
+
+            List<Auction> result = new List<Auction>();
+            foreach (AuctionDb adb in auctionDbs)
+            {
+                Auction auction = new Auction(
+                    adb.Id,
+                    adb.Name,
+                    adb.Description,
+                    adb.StartingPrice,
+                    adb.ExpirationDate,
+                    adb.UserName);
+
+                result.Add(auction);
+            }
+
+            return result;
+        }
+
+        // Krav 8
+        public List<Auction> GetWonAuctions(string userName)
+        {
+            var auctionDbs = _dbContext.AuctionDbs
+                .Include(a => a.BidDbs)
+                .Where(a => a.BidDbs.Any(b => b.UserName == userName) &&                        // 1. Hämta alla autions som har bids av användaren
+                       a.ExpirationDate < DateTime.Now &&                                       // 2. Filtrera bort pågående auktioner
+                       a.BidDbs.OrderByDescending(b => b.Amount).First().UserName == userName)  // 3. Sätt högsta talet först, sen kolla ifall budet är av användaren
+                .ToList();
+
+            List<Auction> result = new List<Auction>();
+            foreach (AuctionDb adb in auctionDbs)
+            {
+                Auction auction = new Auction(
+                    adb.Id,
+                    adb.Name,
+                    adb.Description,
+                    adb.StartingPrice,
+                    adb.ExpirationDate,
+                    adb.UserName);
+
+                result.Add(auction);
+            }
+
+            return result;
         }
     }
 }
