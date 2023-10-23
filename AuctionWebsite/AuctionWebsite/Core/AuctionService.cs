@@ -24,7 +24,7 @@ namespace AuctionWebsite.Core
 
         public void Add(Auction auction)
         {
-            if (auction != null || auction.Id != 0) throw new InvalidDataException("Auction is null or id has been changed.");
+            if (auction == null || auction.Id != 0) throw new InvalidDataException("Auction is null or id has been changed.");
             _auctionPersistance.Add(auction);
         }
 
