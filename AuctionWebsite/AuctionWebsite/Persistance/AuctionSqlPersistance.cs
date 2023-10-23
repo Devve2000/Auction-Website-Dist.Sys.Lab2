@@ -20,10 +20,8 @@ namespace AuctionWebsite.Persistance
 
         public List<Auction> GetAll()
         {
-            //Fixa använda användarhantering!
             var AuctionDbs = _dbContext.AuctionDbs
                 .Where(a => a.ExpirationDate > DateTime.Now)
-                //.Include(p => p.BidDbs)
                 .OrderByDescending(a => a.ExpirationDate)
                 .ToList();
 
@@ -31,15 +29,6 @@ namespace AuctionWebsite.Persistance
             foreach(AuctionDb adb  in AuctionDbs)
             {
                 Auction auction = _mapper.Map<Auction>(adb);
-                /*
-                Auction auction = new Auction(
-                    adb.Id,
-                    adb.Name,
-                    adb.Description,
-                    adb.StartingPrice,
-                    adb.ExpirationDate,
-                    adb.UserName);
-                */
                 result.Add( auction );
             }
 
@@ -58,19 +47,9 @@ namespace AuctionWebsite.Persistance
 
             Auction auction = _mapper.Map<Auction>(auctionDb);
 
-            /*
-            Auction auction = new Auction(
-                auctionDb.Id,
-                auctionDb.Name,
-                auctionDb.Description,
-                auctionDb.StartingPrice,
-                auctionDb.ExpirationDate,
-                auctionDb.UserName);
-            */
             if (auctionDb != null) 
                 foreach(BidDb bdb in auctionDb.BidDbs)
                 {
-                    //auction.addBid(new Bid(bdb.Id, bdb.Amount, bdb.Date, bdb.UserName));
                     auction.addBid(_mapper.Map<Bid>(bdb));
                 }
             
@@ -103,23 +82,11 @@ namespace AuctionWebsite.Persistance
 
         public void Add(Auction a)
         {
-            /*
-            AuctionDb adb = new AuctionDb()
-            {
-                Name = a.Name,
-                Description = a.Description,
-                StartingPrice = a.StartingPrice,
-                ExpirationDate = a.ExpirationDate,
-                UserName = a.UserName
-            };
-            */
             AuctionDb adb = _mapper.Map<AuctionDb>(a);
             _dbContext.AuctionDbs.Add(adb);
             _dbContext.SaveChanges();
         }
 
-        //Krav 3
-        //Uppdatera auction. Antingen (Auction a) eller (int id, string description) ?
         public void Update(Auction auction)
         {
             var auctionDb = _dbContext.AuctionDbs
@@ -144,12 +111,10 @@ namespace AuctionWebsite.Persistance
         }
 
 
-        // Krav 7
         public List<Auction> GetBiddedAuctions(string userName)
         {
             // Any returnerar true ifall en auction har en bid gjord av userName
             var auctionDbs = _dbContext.AuctionDbs
-                //.Include(a => a.BidDbs)
                 .Where(a => a.BidDbs.Any(b => b.UserName == userName) && a.ExpirationDate > DateTime.Now)
                 .ToList();
 
@@ -163,7 +128,6 @@ namespace AuctionWebsite.Persistance
             return result;
         }
 
-        // Krav 8
         public List<Auction> GetWonAuctions(string userName)
         {
             var auctionDbs = _dbContext.AuctionDbs
