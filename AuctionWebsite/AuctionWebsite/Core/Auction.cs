@@ -41,5 +41,18 @@ namespace Dist.Sys.Lab2.Core
             if (_bids.IsNullOrEmpty()) return 0;
             return _bids.MaxBy(b => b.Amount).Amount;
         }
+
+        public string getUserNameOfHighestBid()
+        {
+            if(_bids.IsNullOrEmpty()) return null;
+            return _bids.MaxBy(b => b.Amount).UserName;
+        }
+
+        public Boolean isWinner(string userName)
+        {
+            if (_bids.IsNullOrEmpty()) return false;
+            return _bids.MaxBy(b => b.Amount).UserName == userName && ExpirationDate <= DateTime.Now;
+
+        }
     }
 }

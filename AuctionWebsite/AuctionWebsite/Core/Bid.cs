@@ -22,22 +22,18 @@ namespace Dist.Sys.Lab2.Core
 
         public Bid() { }
 
-        /*
-        public Bid getNewBid(int bidAmount, string userName, int highestBid, int startingPrice)
+        public Bid(int amount, DateTime date, string userName)
         {
-            if(bidAmount > highestBid && bidAmount >= startingPrice) 
-            {
-                return new Bid()
-                {
-                    Amount = bidAmount,
-                    Date = DateTime.Now,
-                    UserName = userName
-                };
-            }
-
-            return null;
+            Amount = amount;
+            Date = date;
+            UserName = userName;
         }
 
-        */
+        public static Bid createNewBid(int amount, string userName)
+        {
+            return new Bid(amount, DateTime.Now, userName);
+        }
+
+
     }
 }

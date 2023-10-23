@@ -67,11 +67,12 @@ namespace AuctionWebsite.Persistance
                 auctionDb.ExpirationDate,
                 auctionDb.UserName);
             */
-            foreach(BidDb bdb in auctionDb.BidDbs)
-            {
-                //auction.addBid(new Bid(bdb.Id, bdb.Amount, bdb.Date, bdb.UserName));
-                auction.addBid(_mapper.Map<Bid>(bdb));
-            }
+            if (auctionDb != null) 
+                foreach(BidDb bdb in auctionDb.BidDbs)
+                {
+                    //auction.addBid(new Bid(bdb.Id, bdb.Amount, bdb.Date, bdb.UserName));
+                    auction.addBid(_mapper.Map<Bid>(bdb));
+                }
             
             return auction;
         }

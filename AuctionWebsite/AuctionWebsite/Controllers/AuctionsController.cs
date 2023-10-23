@@ -62,11 +62,6 @@ namespace AuctionWebsite.Controllers
             return View(auctionVMs);
         }
 
-        // GET: AuctionsController
-        public ActionResult CreateAuction()
-        {
-            return View();
-        }
 
         
         // GET: AuctionsController/Details/5
@@ -133,9 +128,10 @@ namespace AuctionWebsite.Controllers
         }
 
 
-        // GET: AuctionsController/Create
+        // GET: AuctionsController/CreateBid
         public ActionResult CreateBid(int id)
         {
+            if (id < 1) return NotFound();
             Auction a = _auctionService.GetOnlyAuctionInfoById(id);
             if (a == null) return NotFound();
 
@@ -146,7 +142,7 @@ namespace AuctionWebsite.Controllers
             return View();
         }
 
-        // POST: AuctionsController/Create
+        // POST: AuctionsController/CreateBid
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult CreateBid(int id, BidCreateVM bcvm)
@@ -157,23 +153,18 @@ namespace AuctionWebsite.Controllers
 
                 int highestBid = a.highestBid();
 
-                if(bcvm.Bid > highestBid && bcvm.Bid >= a.StartingPrice)
+                if(bcvm.Bid > highestBid && bcvm.Bid >= a.StartingPrice && a.ExpirationDate > DateTime.Now)
                 {
-                    Bid newBid = new Bid()
-                    {
-                        Amount = bcvm.Bid,
-                        Date = DateTime.Now,
-                        UserName = User.Identity.Name
-                    };
+                    Bid newBid = Bid.createNewBid(bcvm.Bid, User.Identity.Name);
                     int auctionId = id;
                     _auctionService.AddBidToAuction(id, newBid);
                     return RedirectToAction("Details", new { id = auctionId});
                 }
                 else
                 {
-                    // Can't enter a bid less.
-                    if(bcvm.Bid < highestBid) ModelState.AddModelError("BidError", "To low of a bid, needs to be atleast above the last bid of :" + highestBid + " kr");
-                    else ModelState.AddModelError("BidError", "To low of a bid, needs to be atleast the starting price of " +  a.StartingPrice + " kr");
+                    if (a.ExpirationDate <= DateTime.Now) ModelState.AddModelError("BidError", "Auction has expired, can't place bid");
+                    else if (bcvm.Bid < highestBid) ModelState.AddModelError("BidError", "To low of a bid, needs to be atleast above the last bid of :" + highestBid + " kr");
+                    else ModelState.AddModelError("BidError", "To low of a bid, needs to be atleast the starting price of " + a.StartingPrice + " kr");
                     return View();
                 }
             }
@@ -181,39 +172,35 @@ namespace AuctionWebsite.Controllers
         }
 
 
-        // GET: AuctionsController/Details/5
+        // GET: AuctionsController/DetailsOfWonAuction/5
         public ActionResult DetailsOfWonAuction(int id)
         {
             Auction a = _auctionService.GetAuctionById(id);
-            AuctionDetailsVM advm = AuctionDetailsVM.FromAuction(a);
-            return View(advm);
+            if (a == null) return NotFound();
+
+            //Check if the highest bidder
+            if(a.isWinner(User.Identity.Name))
+            {
+                AuctionDetailsVM advm = AuctionDetailsVM.FromAuction(a);
+                return View(advm);
+            }
+            else
+            {
+                return NotFound();
+            }
+            
         }
+
 
         /*
-        // GET: AuctionsController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: AuctionsController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-        */
-
+         * Private help method for authenication check.
+         * 
+         * param: id - The id of a resource to check authority.
+         * returns: ActionResult that should execute.
+         * **/
         private ActionResult checkAuthorizationOfResource(int id)
         {
+            if (id < 1) return NotFound();
             Auction a = _auctionService.GetAuctionById(id);
             if (a == null) return NotFound();
             if (a.UserName.Equals(User.Identity.Name))
